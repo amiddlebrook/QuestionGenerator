@@ -39,12 +39,25 @@ class App {
         const questionCount = parseInt(document.getElementById('questionCount').value);
 
         if (questionCount < 1 || questionCount > 50) {
-            alert('Please enter a number between 1 and 50');
+            this.showValidationError('Please enter a number between 1 and 50');
             return;
         }
 
         this.lesson = new Lesson(questionType, questionCount);
         this.renderLesson();
+    }
+
+    /**
+     * Show validation error message
+     */
+    showValidationError(message) {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = `
+            <div class="empty-state">
+                <h2>⚠️ Invalid Input</h2>
+                <p>${message}</p>
+            </div>
+        `;
     }
 
     /**
@@ -123,9 +136,9 @@ class App {
         
         // Add a brief animation to indicate refresh
         questionText.style.animation = 'none';
-        setTimeout(() => {
-            questionText.style.animation = 'fadeIn 0.3s';
-        }, 10);
+        // Force a reflow to reset the animation
+        questionText.offsetHeight;
+        questionText.style.animation = 'fadeIn 0.3s';
     }
 
     /**
@@ -153,22 +166,6 @@ class App {
         }
     }
 }
-
-// Add CSS animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-`;
-document.head.appendChild(style);
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

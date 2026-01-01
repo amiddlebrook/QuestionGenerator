@@ -95,7 +95,7 @@ class Lesson {
      */
     refreshQuestion(index) {
         if (index < 0 || index >= this.questions.length) {
-            throw new Error(`Invalid question index: ${index}`);
+            throw new Error(`Invalid question index: ${index}. Valid range: 0-${this.questions.length - 1}`);
         }
         this.questions[index] = this.generator.generate(this.questionType);
         return this.questions[index];
