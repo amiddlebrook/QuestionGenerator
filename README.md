@@ -1,96 +1,205 @@
 # QuestionGenerator
 
-A dynamic question generator application for practicing math problems with an interactive refresh feature.
+A **universal math question generator** that can parse and generate questions from ANY mathematical expression. Enter any math problem, and the system will analyze it and create similar questions with different numbers while maintaining the pattern.
 
-## Features
+## 🚀 Key Features
 
-- **Dynamic Question Generation**: Generate questions for different math operations (addition, subtraction, multiplication)
-- **Refresh Functionality**: Each question has a refresh button (🔄) to generate a new question of the same type
-- **Customizable Lessons**: Create lessons with any number of questions (1-50)
-- **Answer Validation**: Check your answers and get instant feedback
-- **Multiple Question Types**: 
-  - Addition: Random numbers from 1-100
-  - Subtraction: Random numbers ensuring positive results
-  - Multiplication: Times tables (1-12)
-- **Responsive Design**: Beautiful, card-based layout that works on all screen sizes
+- **Universal Parser**: Works with ANY math expression - from basic arithmetic to advanced calculus
+- **Pattern Recognition**: Analyzes your question and generates similar ones with different numbers
+- **Smart Refresh**: Each question has a refresh button (🔄) to generate a new variant
+- **Intelligent Ranges**: Generates numbers in similar magnitudes to maintain difficulty
+- **Dual Modes**: 
+  - **Preset Types**: Quick access to basic math (addition, subtraction, multiplication)
+  - **Custom Questions**: Enter ANY mathematical expression
 
-## Usage
+## 📖 Usage
 
-1. **Open the Application**: Open `index.html` in a web browser
-2. **Select Question Type**: Choose from Addition, Subtraction, or Multiplication
-3. **Set Number of Questions**: Enter how many questions you want (default: 20)
-4. **Generate Lesson**: Click the "Generate Lesson" button
-5. **Answer Questions**: Type your answer in the input field and click "Check Answer"
-6. **Refresh Questions**: Click the refresh button (🔄) in any question card to generate a new question
+### Quick Start
+1. Open `index.html` in a web browser
+2. Choose your mode:
+   - **Preset Types**: Select from predefined question types
+   - **Custom Question**: Enter any math expression
 
-## Example
+### Custom Question Examples
 
-As specified in the requirements, a lesson can have 20 questions, and you can click a refresh button in the corner of any question to generate a new one. For example:
-- Create an Addition lesson with 20 questions
-- Each question has its own refresh button
-- Clicking refresh generates a new addition question for that card
+The generator can handle ANY math expression:
 
-## Architecture
+```
+Basic Arithmetic:
+  15 + 23 = ?
+  → Generates: 47 + 89 = ?, 12 + 65 = ?, etc.
 
-### Files
+Order of Operations:
+  (12 + 8) × 3 - 5 = ?
+  → Generates: (68 + 7) × 8 - 5 = ?, (19 + 1) × 3 - 5 = ?, etc.
 
-- **index.html**: Main HTML structure
-- **styles.css**: Styling and animations
-- **questionGenerator.js**: Core question generation logic
-  - `QuestionGenerator` class: Handles question generation for different types
-  - `Lesson` class: Manages collections of questions
-- **app.js**: Application logic and UI interactions
+Exponents:
+  2^3 + 5^2 = ?
+  → Generates: 7^3 + 12^2 = ?, 4^3 + 8^2 = ?, etc.
 
-### Key Components
+Advanced Math:
+  sin(30) + cos(60) = ?
+  √(144) - 25 = ?
+  2x + 5 = 13
+```
 
-#### QuestionGenerator Class
-Generates random math questions based on type:
-- `generateAddition()`: Creates addition problems
-- `generateSubtraction()`: Creates subtraction problems
-- `generateMultiplication()`: Creates multiplication problems
-- `generate(type)`: Main method to generate questions of any type
+### Refresh Functionality
+- Each question card has a 🔄 button in the top-right corner
+- Click to generate a NEW question with the same pattern
+- Works for both preset and custom questions
+- Maintains the mathematical structure while changing numbers
 
-#### Lesson Class
-Manages a collection of questions:
-- `initialize()`: Creates initial set of questions
-- `refreshQuestion(index)`: Generates a new question at a specific position
-- `getQuestion(index)`: Retrieves a specific question
-- `getAllQuestions()`: Returns all questions in the lesson
+## 🏗️ Architecture
 
-#### App Class
-Handles UI interactions:
-- `generateLesson()`: Creates a new lesson based on user selections
-- `refreshQuestion(index)`: Updates UI when a question is refreshed
-- `checkAnswer(index)`: Validates user answers
+### Core Components
 
-## Extensibility
+#### **MathParser Class**
+Parses and evaluates mathematical expressions:
+- Tokenizes expressions into numbers, operators, and functions
+- Handles complex operations: `+`, `-`, `×`, `÷`, `^`, parentheses
+- Supports functions: `sin()`, `cos()`, `tan()`, `log()`, `sqrt()`, `√`
+- Safe evaluation using JavaScript Function constructor
 
-The system is designed to be easily extensible with new question types:
+#### **QuestionGenerator Class**
+Universal pattern-based question generator:
+- `generateFromTemplate(questionText)`: Analyzes and replicates patterns
+- `getNumberRange(num)`: Determines appropriate ranges based on magnitude
+- Preserves mathematical structure while varying numbers
+- Calculates correct answers automatically
 
-1. Add a new generator method to the `QuestionGenerator` class
-2. Register it in the `generators` object
-3. Add the option to the HTML dropdown
+#### **Lesson Class**
+Manages collections of questions:
+- `initialize()`: Creates initial question set
+- `refreshQuestion(index)`: Generates new question at specific position
+- Uses current question as template for regeneration
 
-Example:
+#### **App Class**
+Handles UI and user interactions:
+- Mode switching (preset vs. custom)
+- Lesson generation
+- Question refresh functionality
+- Answer validation with floating-point tolerance
+
+## 🎯 How It Works
+
 ```javascript
-generateDivision() {
-    const num2 = this.randomInt(1, 12);
-    const num1 = num2 * this.randomInt(1, 12); // Ensure even division
-    return {
-        question: `${num1} ÷ ${num2} = ?`,
-        answer: num1 / num2,
-        type: 'division'
-    };
+// Example: User enters "(12 + 8) × 3 - 5 = ?"
+
+1. Parse Expression:
+   → Tokens: [12, +, 8, ), ×, 3, -, 5]
+   
+2. Identify Numbers:
+   → [12, 8, 3, 5]
+   
+3. Determine Ranges:
+   → 12: range [10-100]
+   → 8: range [1-12]
+   → 3: range [1-12]
+   → 5: range [1-12]
+   
+4. Generate New Numbers:
+   → [68, 7, 8, 5]
+   
+5. Reconstruct Expression:
+   → "(68 + 7) × 8 - 5 = ?"
+   
+6. Calculate Answer:
+   → 595
+```
+
+## 🔧 Extensibility
+
+The system is designed to be easily extended:
+
+### Adding New Functions
+```javascript
+// In MathParser.evaluate()
+jsExpr = jsExpr.replace(/factorial\(/g, 'Math.factorial(');
+```
+
+### Adding New Operators
+```javascript
+// In MathParser.parse()
+if (/[+\-×*÷/^%!]/.test(char)) {
+    tokens.push({ type: 'operator', value: char });
 }
 ```
 
-## Browser Support
+## 📁 File Structure
 
-Works in all modern browsers that support:
-- ES6 JavaScript
-- CSS Grid
-- CSS Flexbox
+```
+questionGenerator.js  - Core logic (MathParser, QuestionGenerator, Lesson)
+app.js               - UI and event handling
+index.html           - Application structure
+styles.css           - Styling and animations
+README.md            - Documentation
+```
 
-## License
+## 🎨 Features
+
+- ✅ Universal expression parsing
+- ✅ Pattern-based generation
+- ✅ Smart number range selection
+- ✅ Refresh per question
+- ✅ Answer validation (with floating-point tolerance)
+- ✅ Responsive design
+- ✅ No external dependencies
+- ✅ Works offline
+
+## 🔍 Technical Details
+
+**Number Range Selection:**
+- Single digits (< 10): range [1-12]
+- Tens (< 100): range [10-100]
+- Hundreds (< 1000): range [100-1000]
+- Larger: maintains order of magnitude
+
+**Answer Validation:**
+- Tolerance: 0.01 for floating-point comparison
+- Handles integer and decimal answers
+- Displays formatted results
+
+**Expression Support:**
+- Arithmetic: `+`, `-`, `×`, `*`, `÷`, `/`
+- Exponents: `^`, `**`
+- Parentheses: `()`, nested support
+- Functions: `sin`, `cos`, `tan`, `log`, `sqrt`, `√`
+- Order of operations: Full PEMDAS support
+
+## 🌐 Browser Support
+
+Works in all modern browsers supporting:
+- ES6 JavaScript (classes, arrow functions, template literals)
+- CSS Grid and Flexbox
+- HTML5
+
+## 📝 Example Use Cases
+
+1. **Math Teachers**: Create unlimited practice problems for students
+2. **Students**: Practice with dynamically generated questions
+3. **Tutors**: Generate customized problem sets
+4. **Self-Study**: Learn at your own pace with instant feedback
+5. **Assessment**: Create unique test questions on-the-fly
+
+## 🎓 Educational Value
+
+- **Adaptive Learning**: Questions match the complexity of the template
+- **Variety**: Each refresh creates a unique problem
+- **Immediate Feedback**: Check answers instantly
+- **Pattern Recognition**: Students learn to identify mathematical structures
+- **Scalable Difficulty**: Use simple or complex templates as needed
+
+## 🚀 Future Enhancements
+
+Potential additions:
+- Save/load custom question templates
+- Question difficulty levels
+- Performance tracking
+- Multiple answer formats (fractions, mixed numbers)
+- Step-by-step solutions
+- Export to PDF
+- Collaborative question sharing
+
+## 📄 License
 
 MIT License
