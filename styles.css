@@ -45,13 +45,21 @@ header h1 {
     flex-wrap: wrap;
 }
 
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .lesson-controls label {
     font-weight: 600;
     color: #333;
 }
 
 .lesson-controls select,
-.lesson-controls input {
+.lesson-controls input[type="text"],
+.lesson-controls input[type="number"] {
     padding: 8px 12px;
     border: 2px solid #ddd;
     border-radius: 5px;
@@ -63,6 +71,15 @@ header h1 {
 .lesson-controls input:focus {
     outline: none;
     border-color: #667eea;
+}
+
+.hint {
+    display: block;
+    color: #666;
+    font-size: 0.85em;
+    font-style: italic;
+    width: 100%;
+    margin-top: 5px;
 }
 
 .primary-btn {
@@ -226,6 +243,41 @@ header h1 {
 .empty-state p {
     font-size: 1.2em;
     opacity: 0.8;
+    margin-bottom: 10px;
+}
+
+.examples {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.examples h3 {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.examples ul {
+    list-style: none;
+    padding: 0;
+}
+
+.examples li {
+    margin: 10px 0;
+    font-size: 1em;
+}
+
+.examples code {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
 }
 
 @keyframes fadeIn {
