@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Generator - Universal Math Question Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Question Generator</h1>
+            <p class="subtitle">Universal Math Question Generator - Works with ANY Math Expression!</p>
+        </header>
+        
+        <div class="lesson-controls">
+            <div class="control-group">
+                <label for="questionMode">Mode:</label>
+                <select id="questionMode">
+                    <option value="preset">Preset Types</option>
+                    <option value="custom">Custom Question</option>
+                </select>
+            </div>
+            
+            <div id="presetControls" class="control-group">
+                <label for="questionType">Question Type:</label>
+                <select id="questionType">
+                    <option value="addition">Addition</option>
+                    <option value="subtraction">Subtraction</option>
+                    <option value="multiplication">Multiplication</option>
+                </select>
+            </div>
+            
+            <div id="customControls" class="control-group" style="display: none;">
+                <label for="customQuestion">Enter Any Math Question:</label>
+                <input type="text" id="customQuestion" placeholder="e.g., 2x + 5 = ?, sin(45) = ?, √(16) = ?" style="min-width: 300px;">
+                <small class="hint">The generator will create similar questions with different numbers</small>
+            </div>
+            
+            <div class="control-group">
+                <label for="questionCount">Number of Questions:</label>
+                <input type="number" id="questionCount" min="1" max="50" value="20">
+            </div>
+            
+            <button id="generateLesson" class="primary-btn">Generate Lesson</button>
+        </div>
+        
+        <div id="questionsContainer" class="questions-grid">
+            <!-- Questions will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <script src="questionGenerator.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
