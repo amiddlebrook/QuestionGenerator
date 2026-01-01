@@ -48,6 +48,9 @@ class MathParser {
     
     /**
      * Evaluate a mathematical expression safely
+     * NOTE: Uses Function constructor which has security implications.
+     * Only use with controlled/validated input. For production use,
+     * consider using a dedicated math expression library like math.js
      */
     static evaluate(expression) {
         try {
@@ -68,6 +71,7 @@ class MathParser {
                 .replace(/√/g, 'Math.sqrt');
             
             // Use Function constructor for safe evaluation
+            // Input is sanitized to only contain math operations
             const result = new Function(`return ${jsExpr}`)();
             return Math.round(result * 1000000) / 1000000; // Round to 6 decimal places
         } catch (e) {
@@ -105,7 +109,8 @@ class QuestionGenerator {
     getNumberRange(num) {
         const abs = Math.abs(num);
         
-        if (abs === 0) return { min: 0, max: 10 };
+        // Special case: zero should stay zero or very small
+        if (abs === 0) return { min: 0, max: 2 };
         if (abs < 10) return { min: 1, max: 12 };
         if (abs < 100) return { min: 10, max: 100 };
         if (abs < 1000) return { min: 100, max: 1000 };
@@ -144,9 +149,13 @@ class QuestionGenerator {
         // Replace numbers in the expression (from longest to shortest to avoid partial matches)
         replacements.sort((a, b) => b.old.length - a.old.length);
         replacements.forEach(r => {
-            // Use regex to replace whole numbers only
-            const regex = new RegExp('\\b' + r.old.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
-            newExpression = newExpression.replace(regex, r.new);
+            // Replace numbers more carefully - look for exact matches with word boundaries
+            // For negative numbers, include the minus sign in the pattern
+            const isNegative = r.old.startsWith('-');
+            const pattern = isNegative 
+                ? new RegExp('(?<![\\d.])' + r.old.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\d.])', 'g')
+                : new RegExp('(?<![\\d.-])' + r.old.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\d.])', 'g');
+            newExpression = newExpression.replace(pattern, r.new);
         });
         
         // Calculate the answer

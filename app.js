@@ -82,8 +82,15 @@ class App {
                 this.showValidationError('Please enter a math question');
                 return;
             }
-            if (!customQuestion.includes('=') && !customQuestion.includes('?')) {
-                this.showValidationError('Question must contain = or ?');
+            // Try to parse the question to validate it
+            try {
+                const tokens = MathParser.parse(customQuestion);
+                if (tokens.length === 0) {
+                    this.showValidationError('Please enter a valid math expression');
+                    return;
+                }
+            } catch (e) {
+                this.showValidationError('Could not parse the expression. Please check your syntax.');
                 return;
             }
             template = customQuestion;
