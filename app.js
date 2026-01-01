@@ -1,0 +1,176 @@
+/**
+ * Application logic for the Question Generator
+ */
+class App {
+    constructor() {
+        this.lesson = null;
+        this.initializeEventListeners();
+    }
+
+    /**
+     * Initialize event listeners
+     */
+    initializeEventListeners() {
+        const generateBtn = document.getElementById('generateLesson');
+        generateBtn.addEventListener('click', () => this.generateLesson());
+        
+        // Show initial empty state
+        this.showEmptyState();
+    }
+
+    /**
+     * Show empty state message
+     */
+    showEmptyState() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = `
+            <div class="empty-state">
+                <h2>Welcome to Question Generator! 📚</h2>
+                <p>Select a question type and number of questions, then click "Generate Lesson" to start practicing.</p>
+            </div>
+        `;
+    }
+
+    /**
+     * Generate a new lesson
+     */
+    generateLesson() {
+        const questionType = document.getElementById('questionType').value;
+        const questionCount = parseInt(document.getElementById('questionCount').value);
+
+        if (questionCount < 1 || questionCount > 50) {
+            alert('Please enter a number between 1 and 50');
+            return;
+        }
+
+        this.lesson = new Lesson(questionType, questionCount);
+        this.renderLesson();
+    }
+
+    /**
+     * Render the entire lesson
+     */
+    renderLesson() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+
+        this.lesson.getAllQuestions().forEach((question, index) => {
+            const questionCard = this.createQuestionCard(question, index);
+            container.appendChild(questionCard);
+        });
+    }
+
+    /**
+     * Create a question card element
+     */
+    createQuestionCard(question, index) {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `question-${index}`;
+
+        card.innerHTML = `
+            <div class="question-number">${index + 1}</div>
+            <button class="refresh-btn" title="Generate new question" data-index="${index}">
+                🔄
+            </button>
+            <div class="question-content">
+                <div class="question-text">${question.question}</div>
+                <input type="number" class="answer-input" placeholder="Your answer" data-index="${index}">
+                <button class="check-btn" data-index="${index}">Check Answer</button>
+                <div class="feedback" id="feedback-${index}"></div>
+            </div>
+        `;
+
+        // Add event listener for refresh button
+        const refreshBtn = card.querySelector('.refresh-btn');
+        refreshBtn.addEventListener('click', () => this.refreshQuestion(index));
+
+        // Add event listener for check button
+        const checkBtn = card.querySelector('.check-btn');
+        checkBtn.addEventListener('click', () => this.checkAnswer(index));
+
+        // Add event listener for Enter key on input
+        const input = card.querySelector('.answer-input');
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.checkAnswer(index);
+            }
+        });
+
+        return card;
+    }
+
+    /**
+     * Refresh a specific question
+     */
+    refreshQuestion(index) {
+        const newQuestion = this.lesson.refreshQuestion(index);
+        
+        // Get the card element
+        const card = document.getElementById(`question-${index}`);
+        
+        // Update the question text
+        const questionText = card.querySelector('.question-text');
+        questionText.textContent = newQuestion.question;
+        
+        // Clear the input and feedback
+        const input = card.querySelector('.answer-input');
+        input.value = '';
+        
+        const feedback = document.getElementById(`feedback-${index}`);
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+        
+        // Add a brief animation to indicate refresh
+        questionText.style.animation = 'none';
+        setTimeout(() => {
+            questionText.style.animation = 'fadeIn 0.3s';
+        }, 10);
+    }
+
+    /**
+     * Check if the user's answer is correct
+     */
+    checkAnswer(index) {
+        const input = document.querySelector(`.answer-input[data-index="${index}"]`);
+        const userAnswer = parseInt(input.value);
+        const feedback = document.getElementById(`feedback-${index}`);
+        
+        if (isNaN(userAnswer)) {
+            feedback.textContent = 'Please enter a number';
+            feedback.className = 'feedback incorrect';
+            return;
+        }
+
+        const question = this.lesson.getQuestion(index);
+        
+        if (userAnswer === question.answer) {
+            feedback.textContent = '✓ Correct! Well done!';
+            feedback.className = 'feedback correct';
+        } else {
+            feedback.textContent = `✗ Incorrect. The answer is ${question.answer}`;
+            feedback.className = 'feedback incorrect';
+        }
+    }
+}
+
+// Add CSS animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize the app when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new App();
+});
